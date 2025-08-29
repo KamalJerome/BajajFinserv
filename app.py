@@ -1,14 +1,15 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, Response
+import json
 from collections import OrderedDict
 
 
 app = Flask(__name__)
+app.config['JSON_SORT_KEYS'] = False
 
-# Your details
-FULL_NAME = "john_doe"   # lowercase
-DOB = "17091999"         # ddmmyyyy
-EMAIL = "john@xyz.com"
-ROLL_NUMBER = "ABCD123"
+FULL_NAME = "v_kamal_jerome"
+DOB = "15092004"
+EMAIL = "kamaljerome.v2022@vitstudent.ac.in"
+ROLL_NUMBER = "22BAI1212"
 
 
 def alternating_caps_reverse_concat(alphabets):
@@ -27,14 +28,35 @@ def alternating_caps_reverse_concat(alphabets):
 @app.route("/bfhl", methods=["POST"])
 def bfhl():
     try:
-        data = request.get_json().get("data", [])
+        payload = request.get_json()
 
+        # ✅ Case 1: No JSON body or missing "data"
+        if not payload or "data" not in payload:
+            error_resp = OrderedDict([
+                ("is_success", False),
+                ("message", "Missing 'data' field in request body.")
+            ])
+            return Response(
+                json.dumps(error_resp, ensure_ascii=False, sort_keys=False),
+                mimetype="application/json",
+                status=400
+            )
+
+        data = payload["data"]
+
+        # ✅ Case 2: "data" exists but is not a list
         if not isinstance(data, list):
-            return jsonify(OrderedDict([
+            error_resp = OrderedDict([
                 ("is_success", False),
                 ("message", "Invalid input. 'data' must be an array.")
-            ])), 400
+            ])
+            return Response(
+                json.dumps(error_resp, ensure_ascii=False, sort_keys=False),
+                mimetype="application/json",
+                status=400
+            )
 
+        # Normal processing
         even_numbers = []
         odd_numbers = []
         alphabets = []
@@ -42,14 +64,14 @@ def bfhl():
         total_sum = 0
 
         for item in data:
-            if item.isdigit():
+            if isinstance(item, str) and item.isdigit():
                 num = int(item)
                 if num % 2 == 0:
                     even_numbers.append(item)
                 else:
                     odd_numbers.append(item)
                 total_sum += num
-            elif item.isalpha():
+            elif isinstance(item, str) and item.isalpha():
                 alphabets.append(item.upper())
             else:
                 special_chars.append(item)
@@ -67,14 +89,23 @@ def bfhl():
             ("concat_string", alternating_caps_reverse_concat(alphabets))
         ])
 
-        return jsonify(response), 200
+        return Response(
+            json.dumps(response, ensure_ascii=False, sort_keys=False),
+            mimetype="application/json",
+            status=200
+        )
 
     except Exception as e:
-        return jsonify(OrderedDict([
+        error_resp = OrderedDict([
             ("is_success", False),
             ("message", "Server error"),
             ("error", str(e))
-        ])), 500
+        ])
+        return Response(
+            json.dumps(error_resp, ensure_ascii=False, sort_keys=False),
+            mimetype="application/json",
+            status=500
+        )
 
 @app.route("/", methods=["GET"])
 def home():
