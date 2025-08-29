@@ -22,6 +22,7 @@ def alternating_caps_reverse_concat(alphabets):
 
 
 @app.route("/bfhl", methods=["POST"])
+@app.route("/", methods=["POST"])
 def bfhl():
     try:
         payload = request.get_json()
