@@ -21,7 +21,7 @@ def alternating_caps_reverse_concat(alphabets):
     return result
 
 
-@app.route("/bfhl", methods=["POST"])
+@app.route("/", methods=["GET","POST"])
 @app.route("/bfhl", methods=["GET", "POST"])
 def bfhl():
     try:
