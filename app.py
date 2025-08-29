@@ -24,6 +24,8 @@ def alternating_caps_reverse_concat(alphabets):
 @app.route("/", methods=["GET","POST"])
 @app.route("/bfhl", methods=["GET", "POST"])
 def bfhl():
+    if request.method == "GET":
+        return "BFHL API running"
     try:
         payload = request.get_json()
 
