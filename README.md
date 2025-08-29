@@ -10,6 +10,8 @@ Processes input JSON data and classifies elements into numbers, alphabets, and s
 - Returns structured JSON response with `is_success` flag
 
 ## Deployed Link
+https://bajajfinserv-akfz.onrender.com/bfhl
+
 
 ## Candidate Details
 V Kamal Jerome
